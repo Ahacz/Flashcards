@@ -72,12 +72,12 @@ namespace Flashcards.Controllers
                     if (process.ExitCode == 0)
                     {
                         // Command executed successfully
-                        return Ok("VM snapshot started successfully.");
+                        return new JsonResult(new { success = true, message = "VM snapshot started successfully." });
                     }
                     else
                     {
                         // Command failed
-                        return BadRequest($"Failed to start VM snapshot. Error: {error2}");
+                        return new JsonResult(new { success = false, message = $"Failed to start VM snapshot. Error: {error}" });
                     }
                 }
                 else
