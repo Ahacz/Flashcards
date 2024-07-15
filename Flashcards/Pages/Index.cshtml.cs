@@ -1,4 +1,6 @@
+using Flashcards.Controllers;
 using Flashcards.Models;
+using Flashcards.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -6,14 +8,34 @@ namespace Flashcards.Pages
 {
     public class IndexModel : PageModel
     {
+        private readonly VMService _vmService;
+        private readonly SshService _sshService;
         private readonly ApplicationDbContext _context;
-
-        public IndexModel(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         public List<FlashCard> Flashcards { get; set; }
+
+        public IndexModel(ApplicationDbContext context, VMService vMService, SshService ssh)
+        {
+            _vmService= vMService;
+            _context = context;
+            _sshService = ssh;
+            Flashcards = _context.Flashcards.ToList();
+        }
+        public async Task<IActionResult> OnPostRunRepoAsync([FromBody] string id)
+        {
+            var f = _context.Flashcards.Find(id);
+            try
+            {
+                await _vmService.EnsureVmIsRunningAsync();
+                await _sshService.CheckConnectionAsync();
+                await _sshService.RunRepoInVSAsync(f.RepoPath);
+
+                return new JsonResult(new { message = "Repository run successfully."});
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
 
         public void OnGet()
         {

@@ -6,14 +6,16 @@ namespace Flashcards.Models
     public class FlashCard
     {
         private Guid _id;
-        private string  _title, _description, _snapshotPath;
+        private string  _title, _description, _repoLink;
+        private string? _repoPath;
         private int _queuePriority;
         public FlashCard() { }
-        public FlashCard(Guid id, string title, string description, string snapshotpath)
+        public FlashCard(Guid id, string title, string description, string repolink)
         {
             Id = id;
             Title = title;
-            SnapshotPath = snapshotpath;
+            RepoLink = repolink;
+            RepoPath = "";
             Description = description;
             QueuePriority = 0;
         }
@@ -31,10 +33,10 @@ namespace Flashcards.Models
             set => _title = value;
         }
 
-        public string SnapshotPath
+        public string RepoLink
         {
-            get => _snapshotPath;
-            set => _snapshotPath = value;
+            get => _repoLink;
+            set => _repoLink = value;
         }
 
         public string Description
@@ -46,6 +48,12 @@ namespace Flashcards.Models
         {
             get => _queuePriority;
             set => _queuePriority = value;
+        }
+
+        public string RepoPath
+        {
+            get => _repoPath;
+            set => _repoPath = value;
         }
 
         public void SetResult ( bool passed)
