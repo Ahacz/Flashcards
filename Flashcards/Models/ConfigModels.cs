@@ -6,6 +6,7 @@
         public int Port { get; set; }
         public string Username { get; set; }
         public string Pwd { get; set; }
+        public string VSLauncherPath { get; set; }
     }
     public class VmSettings
     {

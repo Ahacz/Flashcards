@@ -1,6 +1,7 @@
 ﻿using Flashcards.Models;
 using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Options;
+using NuGet.Configuration;
 using Renci.SshNet;
 
 namespace Flashcards.Services
@@ -50,7 +51,7 @@ namespace Flashcards.Services
             _sshClient.Connect();
 
             // Find the solution file
-            var findSolutionCommand = $"cd {localPath} && dir /b *.sln";
+            var findSolutionCommand = $"Get-ChildItem -Path \"{localPath}\" -Name \"*.sln\""; 
             var findSolutionResult = await ExecuteCommandAsync(findSolutionCommand);
 
             if (!findSolutionResult.IsSuccess)
@@ -65,7 +66,7 @@ namespace Flashcards.Services
             }
 
             // Ensure the latest commit is checked out
-            var resetCommand = $"cd {localPath} && git reset --hard HEAD";
+            var resetCommand = $"cd {localPath} ; git reset --hard HEAD";
             var resetResult = await ExecuteCommandAsync(resetCommand);
             if (!resetResult.IsSuccess)
             {
@@ -79,28 +80,19 @@ namespace Flashcards.Services
 
             if (isVSRunning)
             {
-                // Attach to the running instance of Visual Studio and open the solution
-                var openSolutionCommand = $@"
-                $vs = [Runtime.InteropServices.Marshal]::GetActiveObject('VisualStudio.DTE');
-                $vs.Solution.Open('{Path.Combine(localPath, solutionFileName)}');";
-                var openSolutionResult = await ExecuteCommandAsync(openSolutionCommand);
-                if (!openSolutionResult.IsSuccess)
-                {
-                    throw new Exception($"Failed to open Visual Studio solution: {openSolutionResult.Error}");
-                }
+                string killVSCommand = $"Get-Process -Name devenv -ErrorAction SilentlyContinue | Stop-Process -Force";
+                var ComResult = await ExecuteCommandAsync(killVSCommand);
+                if (!ComResult.IsSuccess) {
+                    throw new Exception($"Failed to kill existing VS process. {ComResult.Error}"); }
             }
-            else
+            // Open Visual Studio with the solution file
+            var openVSCommand = $"{_settings.VSLauncherPath} {Path.Combine(localPath, solutionFileName)}";
+            var openVSResult = await ExecuteCommandAsync(openVSCommand);
+
+            if (!openVSResult.IsSuccess)
             {
-                // Open Visual Studio with the solution file
-                var openVSCommand = $"start devenv {Path.Combine(localPath, solutionFileName)}";
-                var openVSResult = await ExecuteCommandAsync(openVSCommand);
-
-                if (!openVSResult.IsSuccess)
-                {
-                    throw new Exception($"Failed to open Visual Studio: {openVSResult.Error}");
-                }
+                throw new Exception($"Failed to open Visual Studio: {openVSResult.Error}");
             }
-
             _sshClient.Disconnect();
         }
         public async Task CheckConnectionAsync()
@@ -131,7 +123,8 @@ namespace Flashcards.Services
         private async Task<SshCmdResult> ExecuteCommandAsync(string commandText)
         {
             var command = _sshClient.CreateCommand(commandText);
-            var result = await Task.Run(() => command.Execute());
+            command.Execute();
+            var result = command.Result;
 
             if (command.ExitStatus != 0)
             {

@@ -14,7 +14,10 @@
             <div class="flashcard">
                 <h2>@flashcard.Title</h2>
                 <p>@flashcard.Description</p>
-                <button class="btn btn-primary" onclick="runRepo('@flashcard.Id')">Start Coding!</button>
+                <form method="post" asp-page-handler="RunRepo">
+                    <input type="hidden" name="flashcardId" value="@flashcard.Id" />
+                    <button type="submit">Run Repo</button>
+                </form>
             </div>
         }
     </div>

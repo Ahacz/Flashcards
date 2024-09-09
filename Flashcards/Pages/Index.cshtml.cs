@@ -20,16 +20,20 @@ namespace Flashcards.Pages
             _sshService = ssh;
             Flashcards = _context.Flashcards.ToList();
         }
-        public async Task<IActionResult> OnPostRunRepoAsync([FromBody] string id)
+        public async Task<IActionResult> OnPostRunRepoAsync(string flashcardId)
         {
-            var f = _context.Flashcards.Find(id);
+            if(string.IsNullOrEmpty(flashcardId))
+            {
+                return BadRequest("FlashcardId is null.");
+            }
+            FlashCard f = await _context.Flashcards.FindAsync(Guid.Parse(flashcardId));
             try
             {
                 await _vmService.EnsureVmIsRunningAsync();
                 await _sshService.CheckConnectionAsync();
                 await _sshService.RunRepoInVSAsync(f.RepoPath);
 
-                return new JsonResult(new { message = "Repository run successfully."});
+                return RedirectToPage("./Index");
             }
             catch (Exception ex)
             {

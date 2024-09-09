@@ -28,12 +28,12 @@ namespace Flashcards.Controllers
         }
         private void StartVm()
         {
-            var startVmCommand = $"\"{_settings.VMmgrPath}\" startvm \"{_settings.VMName}\"";
+            var startVmCommand =" startvm "+_settings.VMName;
             ExecuteCommand(startVmCommand);
         }
         private bool IsVmRunning()
         {
-            var checkVmCommand = $"{_settings.VMmgrPath} showvminfo {_settings.VMName} --machinereadable";
+            var checkVmCommand = $" showvminfo {_settings.VMName} --machinereadable";
             var result = ExecuteCommand(checkVmCommand);
 
             // Check if the VM state is "running"
@@ -41,11 +41,13 @@ namespace Flashcards.Controllers
         }
         private string ExecuteCommand(string command)
         {
-            var processInfo = new ProcessStartInfo("cmd.exe", $"/c {command}")
+            ProcessStartInfo processInfo = new ProcessStartInfo
             {
+                FileName = _settings.VMmgrPath,
+                Arguments = command,
+                UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
-                UseShellExecute = false,
                 CreateNoWindow = true
             };
 
@@ -56,7 +58,7 @@ namespace Flashcards.Controllers
 
             process.Start();
             var output = process.StandardOutput.ReadToEnd();
-            process.WaitForExit();
+            process.Dispose();
 
             return output;
         }
