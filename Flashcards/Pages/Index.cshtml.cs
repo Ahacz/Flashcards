@@ -32,13 +32,12 @@ namespace Flashcards.Pages
                 await _vmService.EnsureVmIsRunningAsync();
                 await _sshService.CheckConnectionAsync();
                 await _sshService.RunRepoInVSAsync(f.RepoPath);
-
-                return RedirectToPage("./Index");
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
+            return RedirectToPage("./Result", new { id = flashcardId });
         }
 
         public void OnGet()

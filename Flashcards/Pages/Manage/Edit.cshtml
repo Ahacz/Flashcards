@@ -1,0 +1,55 @@
+﻿@page
+@model Flashcards.Pages.Manage.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>FlashCard</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="FlashCard.Id" />
+            <div class="form-group">
+                <label asp-for="FlashCard.Title" class="control-label"></label>
+                <input asp-for="FlashCard.Title" class="form-control" />
+                <span asp-validation-for="FlashCard.Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FlashCard.RepoLink" class="control-label"></label>
+                <input asp-for="FlashCard.RepoLink" class="form-control" />
+                <span asp-validation-for="FlashCard.RepoLink" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FlashCard.Description" class="control-label"></label>
+                <input asp-for="FlashCard.Description" class="form-control" />
+                <span asp-validation-for="FlashCard.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FlashCard.QueuePriority" class="control-label"></label>
+                <input asp-for="FlashCard.QueuePriority" class="form-control" />
+                <span asp-validation-for="FlashCard.QueuePriority" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FlashCard.RepoPath" class="control-label"></label>
+                <input asp-for="FlashCard.RepoPath" class="form-control" />
+                <span asp-validation-for="FlashCard.RepoPath" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

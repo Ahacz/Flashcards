@@ -55,7 +55,6 @@ namespace Flashcards.Controllers
             {
                 StartInfo = processInfo
             };
-
             process.Start();
             var output = process.StandardOutput.ReadToEnd();
             process.Dispose();

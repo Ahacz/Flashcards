@@ -1,0 +1,17 @@
+﻿@page "{id:guid}"
+@model Flashcards.Pages.ResultModel
+
+@{
+    ViewData["Title"] = "Task Result";
+}
+
+<h2>@Model.FlashCard.Title - Task Result</h2>
+<p>@Model.FlashCard.Description</p>
+
+<form method="post">
+    <input type="hidden" name="flashCardId" value="@Model.FlashCard.Id" />
+    <button type="submit" name="action" value="easy" class="btn btn-success">Done, easy</button>
+    <button type="submit" name="action" value="review" class="btn btn-warning">Done but I struggled a bit</button>
+    <button type="submit" name="action" value="fail" class="btn btn-danger">Failed</button>
+</form>
+

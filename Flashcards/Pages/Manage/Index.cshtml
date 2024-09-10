@@ -1,0 +1,60 @@
+﻿@page
+@model Flashcards.Pages.Manage.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FlashCard[0].Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FlashCard[0].RepoLink)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FlashCard[0].Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FlashCard[0].QueuePriority)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FlashCard[0].RepoPath)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.FlashCard) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RepoLink)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.QueuePriority)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RepoPath)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
